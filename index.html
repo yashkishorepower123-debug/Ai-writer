@@ -2,784 +2,488 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#111020">
-  <meta name="description" content="Writer AI helps you create, improve, and organize your writing.">
-  <title>Writer AI — Your Writing Assistant</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0d0c18">
+<meta name="description" content="Writer AI - your personal AI writing assistant.">
+<title>Writer AI — Your Writing Assistant</title>
 
-  <style>
-    :root {
-      --bg: #0d0c18;
-      --panel: #171627;
-      --panel2: #201e34;
-      --border: #302d49;
-      --text: #f5f3ff;
-      --muted: #a5a1bb;
-      --purple: #9a7bff;
-      --purple2: #7455ec;
-      --green: #76e6bd;
-      --danger: #ff9d9d;
-    }
-
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      color: var(--text);
-      background:
-        radial-gradient(ellipse at 50% 0%, #282044 0%, transparent 48%),
-        var(--bg);
-      font-family: system-ui, -apple-system, BlinkMacSystemFont,
-        "Segoe UI", sans-serif;
-    }
-
-    button, input, textarea, select { font: inherit; }
-
-    button { cursor: pointer; }
-
-    button:focus-visible, textarea:focus-visible,
-    select:focus-visible, input:focus-visible {
-      outline: 2px solid var(--purple);
-      outline-offset: 3px;
-    }
-
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 18px max(5%, calc((100% - 1080px) / 2));
-      border-bottom: 1px solid #ffffff12;
-      background: #0d0c18a8;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 19px;
-      font-weight: 800;
-      letter-spacing: -.5px;
-    }
-
-    .logo {
-      display: grid;
-      place-items: center;
-      width: 38px;
-      height: 38px;
-      border-radius: 13px;
-      background: linear-gradient(135deg, #a78bfa, #7254e9);
-      color: white;
-      font-size: 21px;
-    }
-
-    .top-label {
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    main {
-      width: min(100% - 28px, 960px);
-      margin: 48px auto 70px;
-    }
-
-    .hero { text-align: center; margin-bottom: 32px; }
-
-    .eyebrow {
-      display: inline-flex;
-      gap: 7px;
-      align-items: center;
-      color: #d3c7ff;
-      background: #9a7bff18;
-      border: 1px solid #9a7bff38;
-      border-radius: 30px;
-      padding: 7px 12px;
-      font-size: 12px;
-      margin-bottom: 17px;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: clamp(32px, 7vw, 52px);
-      line-height: 1.12;
-      letter-spacing: -2px;
-    }
-
-    h1 span {
-      color: #b4a0ff;
-    }
-
-    .subtitle {
-      max-width: 560px;
-      margin: 15px auto 0;
-      color: var(--muted);
-      line-height: 1.7;
-      font-size: 14px;
-    }
-
-    .workspace {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      align-items: start;
-    }
-
-    .panel {
-      min-width: 0;
-      padding: 22px;
-      background: #171627ed;
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      box-shadow: 0 18px 55px #00000012;
-    }
-
-    .panel-heading {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-
-    h2 {
-      margin: 0;
-      font-size: 16px;
-      letter-spacing: -.2px;
-    }
-
-    .step {
-      color: #c3b4ff;
-      font-size: 11px;
-      font-weight: 700;
-      background: #9a7bff1b;
-      border-radius: 8px;
-      padding: 6px 9px;
-    }
-
-    .field { margin-bottom: 17px; }
-
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-size: 12px;
-      font-weight: 650;
-      color: #d9d5e9;
-    }
-
-    textarea, select, input {
-      width: 100%;
-      border: 1px solid var(--border);
-      border-radius: 11px;
-      color: var(--text);
-      background: #100f1d;
-      padding: 12px;
-    }
-
-    textarea {
-      resize: vertical;
-      min-height: 158px;
-      line-height: 1.65;
-    }
-
-    textarea::placeholder, input::placeholder {
-      color: #77728e;
-    }
-
-    select { min-height: 44px; }
-
-    .select-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .hint {
-      display: flex;
-      justify-content: space-between;
-      gap: 8px;
-      margin-top: 7px;
-      color: var(--muted);
-      font-size: 11px;
-    }
-
-    .primary {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 9px;
-      width: 100%;
-      padding: 13px 15px;
-      border: 0;
-      border-radius: 12px;
-      background: linear-gradient(110deg, #a58aff, #7857ee);
-      color: white;
-      font-weight: 750;
-      transition: filter .2s, transform .2s;
-    }
-
-    .primary:hover { filter: brightness(1.1); }
-    .primary:active { transform: scale(.99); }
-    .primary:disabled { opacity: .65; cursor: wait; }
-
-    .secondary {
-      border: 1px solid var(--border);
-      background: var(--panel2);
-      color: #e7e2fa;
-      border-radius: 9px;
-      padding: 8px 11px;
-      font-size: 12px;
-      font-weight: 650;
-    }
-
-    .secondary:hover { border-color: var(--purple); }
-
-    .result-box {
-      min-height: 390px;
-      padding: 15px;
-      background: #100f1d;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      white-space: pre-wrap;
-      overflow-wrap: anywhere;
-      line-height: 1.8;
-      font-size: 13px;
-      color: #e7e3f5;
-    }
-
-    .placeholder {
-      display: grid;
-      min-height: 355px;
-      align-content: center;
-      justify-items: center;
-      text-align: center;
-      color: var(--muted);
-      gap: 12px;
-      white-space: normal;
-    }
-
-    .placeholder-icon {
-      display: grid;
-      place-items: center;
-      width: 54px;
-      height: 54px;
-      border: 1px solid var(--border);
-      border-radius: 17px;
-      background: var(--panel2);
-      font-size: 24px;
-    }
-
-    .placeholder strong {
-      color: #e9e4fb;
-      font-size: 14px;
-    }
-
-    .placeholder p {
-      max-width: 220px;
-      margin: 0;
-      font-size: 12px;
-      line-height: 1.7;
-    }
-
-    .result-toolbar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin: 12px 0 15px;
-    }
-
-    .result-toolbar button { flex: 1; }
-
-    .status {
-      min-height: 18px;
-      margin: 10px 0 0;
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.5;
-    }
-
-    .status.error { color: var(--danger); }
-    .status.success { color: var(--green); }
-
-    .history-panel {
-      margin-top: 18px;
-      padding: 18px 20px;
-      background: #171627b8;
-      border: 1px solid var(--border);
-      border-radius: 16px;
-    }
-
-    .history-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 12px;
-    }
-
-    .history-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .history-item {
-      max-width: 100%;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      text-align: left;
-    }
-
-    .empty-history {
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    footer {
-      margin-top: 32px;
-      color: #858099;
-      text-align: center;
-      font-size: 11px;
-      line-height: 1.8;
-    }
-
-    @media (max-width: 720px) {
-      main { margin-top: 32px; }
-      .workspace { grid-template-columns: 1fr; }
-      .panel { padding: 18px; }
-      .result-box { min-height: 250px; }
-      .placeholder { min-height: 210px; }
-      .top-label { display: none; }
-    }
-
-    @media (max-width: 370px) {
-      .select-grid { grid-template-columns: 1fr; gap: 0; }
-      h1 { letter-spacing: -1px; }
-    }
-  </style>
+<style>
+:root {
+  --bg:#0d0c18;
+  --panel:#171627;
+  --panel2:#201e34;
+  --border:#302d49;
+  --text:#f5f3ff;
+  --muted:#a5a1bb;
+  --purple:#9a7bff;
+  --green:#76e6bd;
+  --danger:#ff9d9d;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0;
+  min-height:100vh;
+  color:var(--text);
+  background:radial-gradient(ellipse at 50% 0%,#282044 0%,transparent 48%),var(--bg);
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+button,input,textarea,select { font:inherit; }
+button { cursor:pointer; }
+button:focus-visible,textarea:focus-visible,select:focus-visible {
+  outline:2px solid var(--purple);
+  outline-offset:3px;
+}
+.topbar {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:16px max(5%,calc((100% - 1080px)/2));
+  border-bottom:1px solid #ffffff12;
+}
+.brand { display:flex;align-items:center;gap:10px;font-size:19px;font-weight:800; }
+.logo {
+  display:grid;place-items:center;width:38px;height:38px;
+  border-radius:13px;background:linear-gradient(135deg,#a78bfa,#7254e9);
+  font-size:22px;
+}
+.top-label { color:var(--muted);font-size:12px; }
+main { width:min(100% - 28px,960px);margin:38px auto 60px; }
+.hero { text-align:center;margin-bottom:30px; }
+.eyebrow {
+  display:inline-block;color:#d3c7ff;background:#9a7bff18;
+  border:1px solid #9a7bff38;border-radius:30px;
+  padding:7px 12px;font-size:12px;margin-bottom:16px;
+}
+h1 { margin:0;font-size:clamp(32px,7vw,52px);line-height:1.12;letter-spacing:-2px; }
+h1 span { color:#b4a0ff; }
+.subtitle { max-width:560px;margin:15px auto 0;color:var(--muted);line-height:1.7;font-size:14px; }
+.workspace { display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start; }
+.panel {
+  min-width:0;padding:21px;background:#171627ed;
+  border:1px solid var(--border);border-radius:20px;
+}
+.panel-heading,.history-header {
+  display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:20px;
+}
+h2 { margin:0;font-size:16px; }
+.step { color:#c3b4ff;font-size:11px;font-weight:700;background:#9a7bff1b;border-radius:8px;padding:6px 9px; }
+.field { margin-bottom:16px; }
+label { display:block;margin-bottom:8px;font-size:12px;font-weight:650;color:#d9d5e9; }
+textarea,select {
+  width:100%;border:1px solid var(--border);border-radius:11px;
+  color:var(--text);background:#100f1d;padding:12px;
+}
+textarea { resize:vertical;min-height:150px;line-height:1.65; }
+textarea::placeholder { color:#77728e; }
+select { min-height:44px; }
+.select-grid { display:grid;grid-template-columns:1fr 1fr;gap:12px; }
+.hint { display:flex;justify-content:space-between;gap:8px;margin-top:7px;color:var(--muted);font-size:11px; }
+.primary {
+  display:flex;align-items:center;justify-content:center;gap:9px;width:100%;
+  padding:13px 15px;border:0;border-radius:12px;
+  background:linear-gradient(110deg,#a58aff,#7857ee);color:white;font-weight:750;
+}
+.primary:disabled { opacity:.65;cursor:wait; }
+.secondary {
+  border:1px solid var(--border);background:var(--panel2);color:#e7e2fa;
+  border-radius:9px;padding:9px 11px;font-size:12px;font-weight:650;
+}
+.secondary:disabled { opacity:.45;cursor:not-allowed; }
+.result-box {
+  min-height:330px;padding:15px;background:#100f1d;
+  border:1px solid var(--border);border-radius:12px;
+  white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.8;font-size:13px;
+}
+.placeholder {
+  display:grid;min-height:290px;align-content:center;justify-items:center;
+  text-align:center;color:var(--muted);gap:12px;white-space:normal;
+}
+.placeholder-icon {
+  display:grid;place-items:center;width:54px;height:54px;
+  border:1px solid var(--border);border-radius:17px;background:var(--panel2);font-size:24px;
+}
+.placeholder strong { color:#e9e4fb;font-size:14px; }
+.placeholder p { max-width:230px;margin:0;font-size:12px;line-height:1.7; }
+.result-toolbar { display:flex;flex-wrap:wrap;gap:8px;margin:12px 0; }
+.result-toolbar button { flex:1; }
+.status { min-height:18px;margin:10px 0 0;color:var(--muted);font-size:12px;line-height:1.5;overflow-wrap:anywhere; }
+.status.error { color:var(--danger); }
+.status.success { color:var(--green); }
+.history-panel {
+  margin-top:18px;padding:18px 20px;background:#171627b8;
+  border:1px solid var(--border);border-radius:16px;
+}
+.history-header { margin-bottom:12px; }
+.history-list { display:flex;flex-wrap:wrap;gap:8px; }
+.history-item { max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left; }
+.empty-history { color:var(--muted);font-size:12px; }
+footer { margin-top:30px;color:#858099;text-align:center;font-size:11px;line-height:1.8; }
+@media(max-width:720px) {
+  main { margin-top:28px; }
+  .workspace { grid-template-columns:1fr; }
+  .panel { padding:17px; }
+  .result-box { min-height:240px; }
+  .placeholder { min-height:190px; }
+  .top-label { display:none; }
+}
+@media(max-width:370px) {
+  .select-grid { grid-template-columns:1fr;gap:0; }
+  h1 { letter-spacing:-1px; }
+}
+</style>
 </head>
 
 <body>
-  <header class="topbar">
-    <div class="brand">
-      <div class="logo" aria-hidden="true">✦</div>
-      <span>Writer AI</span>
-    </div>
-    <div class="top-label">Your creative workspace ✨</div>
-  </header>
+<header class="topbar">
+  <div class="brand"><div class="logo">✦</div><span>Writer AI</span></div>
+  <div class="top-label">Your creative workspace ✨</div>
+</header>
 
-  <main>
-    <section class="hero">
-      <div class="eyebrow">✦ YOUR AI WRITING ASSISTANT</div>
-      <h1>Ideas into <span>words.</span></h1>
-      <p class="subtitle">
-        Create essays, stories, emails, speeches and more.
-        Start with an idea and let your creativity take shape.
-      </p>
-    </section>
+<main>
+  <section class="hero">
+    <div class="eyebrow">✦ YOUR AI WRITING ASSISTANT</div>
+    <h1>Ideas into <span>words.</span></h1>
+    <p class="subtitle">Create essays, stories, emails, speeches and more. Start with an idea and let your creativity take shape.</p>
+  </section>
 
-    <section class="workspace">
-      <div class="panel">
-        <div class="panel-heading">
-          <h2>What are we writing?</h2>
-          <span class="step">STEP 01</span>
+  <section class="workspace">
+    <div class="panel">
+      <div class="panel-heading"><h2>What are we writing?</h2><span class="step">STEP 01</span></div>
+
+      <form id="writerForm">
+        <div class="field">
+          <label for="prompt">Your idea or instructions</label>
+          <textarea id="prompt" maxlength="8000" required placeholder="Example: Write a school essay about the importance of trees, with an introduction, main points and conclusion..."></textarea>
+          <div class="hint"><span>Be as specific as you like.</span><span id="charCount">0 / 8000</span></div>
         </div>
 
-        <form id="writerForm">
+        <div class="select-grid">
           <div class="field">
-            <label for="prompt">Your idea or instructions</label>
-            <textarea
-              id="prompt"
-              maxlength="8000"
-              required
-              placeholder="Example: Write a school essay about the importance of trees, with an introduction, main points and conclusion..."
-            ></textarea>
-            <div class="hint">
-              <span>Be as specific as you like.</span>
-              <span id="charCount">0 / 8000</span>
-            </div>
+            <label for="type">Writing type</label>
+            <select id="type">
+              <option>Essay</option><option>Story</option><option>Email</option>
+              <option>Letter</option><option>Blog post</option>
+              <option>Social media post</option><option>Speech</option>
+              <option>Summary</option><option>Poem</option><option selected>General</option>
+            </select>
           </div>
-
-          <div class="select-grid">
-            <div class="field">
-              <label for="type">Writing type</label>
-              <select id="type">
-                <option>Essay</option>
-                <option>Story</option>
-                <option>Email</option>
-                <option>Letter</option>
-                <option>Blog post</option>
-                <option>Social media post</option>
-                <option>Speech</option>
-                <option>Summary</option>
-                <option>Poem</option>
-                <option selected>General writing</option>
-              </select>
-            </div>
-
-            <div class="field">
-              <label for="tone">Writing tone</label>
-              <select id="tone">
-                <option>Friendly</option>
-                <option>Professional</option>
-                <option>Creative</option>
-                <option>Formal</option>
-                <option>Simple</option>
-                <option>Persuasive</option>
-                <option>Funny</option>
-              </select>
-            </div>
-
-            <div class="field">
-              <label for="length">Length</label>
-              <select id="length">
-                <option>Short</option>
-                <option selected>Medium</option>
-                <option>Long</option>
-              </select>
-            </div>
-
-            <div class="field">
-              <label for="language">Language</label>
-              <select id="language">
-                <option>English</option>
-                <option>Hindi</option>
-                <option>Simple English</option>
-                <option>Spanish</option>
-                <option>French</option>
-                <option>German</option>
-              </select>
-            </div>
+          <div class="field">
+            <label for="tone">Writing tone</label>
+            <select id="tone">
+              <option>Friendly</option><option>Professional</option>
+              <option>Creative</option><option>Formal</option>
+              <option>Simple</option><option>Persuasive</option><option>Funny</option>
+            </select>
           </div>
-
-          <button class="primary" id="generateBtn" type="submit">
-            <span>✦</span>
-            <span id="generateLabel">Generate writing</span>
-          </button>
-
-          <p class="status" id="formStatus" role="status" aria-live="polite"></p>
-        </form>
-      </div>
-
-      <div class="panel">
-        <div class="panel-heading">
-          <h2>Your creation</h2>
-          <span class="step">STEP 02</span>
-        </div>
-
-        <div class="result-box" id="result" aria-live="polite">
-          <div class="placeholder">
-            <div class="placeholder-icon">✎</div>
-            <strong>Your words will appear here</strong>
-            <p>Describe your idea, choose your settings, and select Generate writing.</p>
+          <div class="field">
+            <label for="length">Length</label>
+            <select id="length"><option>Short</option><option selected>Medium</option><option>Long</option></select>
+          </div>
+          <div class="field">
+            <label for="language">Language</label>
+            <select id="language">
+              <option>English</option><option>Hindi</option><option>Simple English</option>
+              <option>Spanish</option><option>French</option><option>German</option>
+              <option>Bengali</option><option>Portuguese</option><option>Japanese</option>
+              <option>Chinese</option><option>Urdu</option>
+            </select>
           </div>
         </div>
 
-        <div class="result-toolbar">
-          <button class="secondary" id="copyBtn" type="button" disabled>▣ Copy</button>
-          <button class="secondary" id="downloadBtn" type="button" disabled>↓ Download</button>
-          <button class="secondary" id="rewriteBtn" type="button" disabled>↻ Improve</button>
-        </div>
+        <button class="primary" id="generateBtn" type="submit">✦ <span id="generateLabel">Generate writing</span></button>
+        <p class="status" id="formStatus" role="status" aria-live="polite"></p>
+      </form>
+    </div>
 
-        <p class="status" id="resultStatus" role="status" aria-live="polite">
-          Your generated text will be ready to copy or download.
-        </p>
+    <div class="panel">
+      <div class="panel-heading"><h2>Your creation</h2><span class="step">STEP 02</span></div>
+      <div class="result-box" id="result" aria-live="polite">
+        <div class="placeholder"><div class="placeholder-icon">✎</div><strong>Your words will appear here</strong><p>Describe your idea, choose your settings, and select Generate writing.</p></div>
       </div>
-    </section>
-
-    <section class="history-panel">
-      <div class="history-header">
-        <h2>Recent writing</h2>
-        <button class="secondary" id="clearHistoryBtn" type="button">Clear history</button>
+      <div class="result-toolbar">
+        <button class="secondary" id="copyBtn" type="button" disabled>▣ Copy</button>
+        <button class="secondary" id="downloadBtn" type="button" disabled>↓ Download</button>
+        <button class="secondary" id="rewriteBtn" type="button" disabled>↻ Improve</button>
       </div>
-      <div class="history-list" id="historyList">
-        <span class="empty-history">Your recent creations will appear here.</span>
-      </div>
-    </section>
+      <p class="status" id="resultStatus" role="status" aria-live="polite">Your generated text will be ready to copy or download.</p>
+    </div>
+  </section>
 
-    <footer>
-      Writer AI · Make every word count.<br>
-      Review important facts before using or sharing generated text.
-    </footer>
-  </main>
+  <section class="history-panel">
+    <div class="history-header"><h2>Recent writing</h2><button class="secondary" id="clearHistoryBtn" type="button">Clear history</button></div>
+    <div class="history-list" id="historyList"><span class="empty-history">Your recent creations will appear here.</span></div>
+  </section>
 
-  <script>
-    const $ = (id) => document.getElementById(id);
+  <footer>Writer AI · Make every word count.<br>Review important facts before using or sharing generated text.</footer>
+</main>
 
-    const form = $("writerForm");
-    const promptInput = $("prompt");
-    const resultBox = $("result");
-    const formStatus = $("formStatus");
-    const resultStatus = $("resultStatus");
-    const generateBtn = $("generateBtn");
-    const generateLabel = $("generateLabel");
-    const copyBtn = $("copyBtn");
-    const downloadBtn = $("downloadBtn");
-    const rewriteBtn = $("rewriteBtn");
-    const historyList = $("historyList");
+<script>
+"use strict";
 
-    let currentText = "";
-    let busy = false;
-    let history = loadHistory();
+const API_BASE = "https://backend.yashkishorepower123.workers.dev";
+const $ = id => document.getElementById(id);
 
-    function loadHistory() {
-      try {
-        const saved = JSON.parse(
-          localStorage.getItem("writer-ai-history") || "[]"
-        );
-        return Array.isArray(saved) ? saved.slice(0, 8) : [];
-      } catch {
-        return [];
-      }
-    }
+const form = $("writerForm");
+const promptInput = $("prompt");
+const resultBox = $("result");
+const formStatus = $("formStatus");
+const resultStatus = $("resultStatus");
+const generateBtn = $("generateBtn");
+const generateLabel = $("generateLabel");
+const copyBtn = $("copyBtn");
+const downloadBtn = $("downloadBtn");
+const rewriteBtn = $("rewriteBtn");
+const historyList = $("historyList");
 
-    function saveHistory() {
-      try {
-        localStorage.setItem(
-          "writer-ai-history",
-          JSON.stringify(history.slice(0, 8))
-        );
-      } catch {
-        // Writing still works if browser storage is unavailable.
-      }
-    }
+let currentText = "";
+let busy = false;
+let history = loadHistory();
 
-    function setStatus(element, message, kind = "") {
-      element.textContent = message;
-      element.className = "status" + (kind ? " " + kind : "");
-    }
+function loadHistory() {
+  try {
+    const saved = JSON.parse(localStorage.getItem("writer-ai-history") || "[]");
+    return Array.isArray(saved) ? saved.slice(0, 8) : [];
+  } catch {
+    return [];
+  }
+}
 
-    function setResult(text) {
-      currentText = text;
-      resultBox.textContent = text;
+function saveHistory() {
+  try {
+    localStorage.setItem("writer-ai-history", JSON.stringify(history.slice(0, 8)));
+  } catch {}
+}
 
-      copyBtn.disabled = !text;
-      downloadBtn.disabled = !text;
-      rewriteBtn.disabled = !text;
-    }
+function setStatus(element, message, kind = "") {
+  element.textContent = message;
+  element.className = "status" + (kind ? " " + kind : "");
+}
 
-    function showPlaceholder() {
-      resultBox.replaceChildren();
+function setResult(text) {
+  currentText = text;
+  resultBox.textContent = text;
+  copyBtn.disabled = !text;
+  downloadBtn.disabled = !text;
+  rewriteBtn.disabled = busy || !text;
+}
 
-      const wrapper = document.createElement("div");
-      wrapper.className = "placeholder";
+function showPlaceholder() {
+  currentText = "";
+  resultBox.replaceChildren();
 
-      const icon = document.createElement("div");
-      icon.className = "placeholder-icon";
-      icon.textContent = "✎";
+  const wrapper = document.createElement("div");
+  wrapper.className = "placeholder";
+  const icon = document.createElement("div");
+  icon.className = "placeholder-icon";
+  icon.textContent = "✎";
+  const heading = document.createElement("strong");
+  heading.textContent = "Your words will appear here";
+  const paragraph = document.createElement("p");
+  paragraph.textContent = "Describe your idea, choose your settings, and select Generate writing.";
+  wrapper.append(icon, heading, paragraph);
+  resultBox.append(wrapper);
 
-      const heading = document.createElement("strong");
-      heading.textContent = "Your words will appear here";
+  copyBtn.disabled = true;
+  downloadBtn.disabled = true;
+  rewriteBtn.disabled = true;
+}
 
-      const paragraph = document.createElement("p");
-      paragraph.textContent =
-        "Describe your idea, choose your settings, and select Generate writing.";
+function renderHistory() {
+  historyList.replaceChildren();
 
-      wrapper.append(icon, heading, paragraph);
-      resultBox.append(wrapper);
-    }
+  if (!history.length) {
+    const empty = document.createElement("span");
+    empty.className = "empty-history";
+    empty.textContent = "Your recent creations will appear here.";
+    historyList.append(empty);
+    return;
+  }
 
-    function renderHistory() {
-      historyList.replaceChildren();
+  history.forEach(item => {
+    const button = document.createElement("button");
+    button.className = "secondary history-item";
+    button.type = "button";
+    button.textContent = item.title;
+    button.title = "Load previous writing";
+    button.addEventListener("click", () => {
+      setResult(item.text);
+      setStatus(resultStatus, "Previous writing loaded.", "success");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+    historyList.append(button);
+  });
+}
 
-      if (!history.length) {
-        const empty = document.createElement("span");
-        empty.className = "empty-history";
-        empty.textContent = "Your recent creations will appear here.";
-        historyList.append(empty);
-        return;
-      }
+function addHistory(text) {
+  const title = promptInput.value.trim().slice(0, 65) || "Untitled";
+  history = [{ title, text, date: Date.now() }, ...history.filter(item => item.text !== text)].slice(0, 8);
+  saveHistory();
+  renderHistory();
+}
 
-      history.forEach((item) => {
-        const button = document.createElement("button");
-        button.className = "secondary history-item";
-        button.type = "button";
-        button.textContent = item.title;
-        button.title = "Load this previous result";
+async function postJSON(path, data) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 70000);
 
-        button.addEventListener("click", () => {
-          setResult(item.text);
-          setStatus(resultStatus, "Previous writing loaded.", "success");
-          window.scrollTo({ top: 0, behavior: "smooth" });
-        });
-
-        historyList.append(button);
-      });
-    }
-
-    function addHistory(text) {
-      const title = promptInput.value.trim().slice(0, 65) || "Untitled";
-
-      history = [
-        { title, text, date: Date.now() },
-        ...history.filter((item) => item.text !== text)
-      ].slice(0, 8);
-
-      saveHistory();
-      renderHistory();
-    }
-
-    async function postJSON(url, data) {
-      const response = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
-      });
-
-      let body;
-
-      try {
-        body = await response.json();
-      } catch {
-        throw new Error("The server returned an invalid response.");
-      }
-
-      if (!response.ok) {
-        throw new Error(body.error || "The request failed.");
-      }
-
-      if (typeof body.text !== "string" || !body.text.trim()) {
-        throw new Error("No writing was returned. Please try again.");
-      }
-
-      return body.text;
-    }
-
-    function setBusy(value, label = "Generate writing") {
-      busy = value;
-      generateBtn.disabled = value;
-      generateLabel.textContent = value ? label : "Generate writing";
-      generateBtn.querySelector("span").textContent = value ? "…" : "✦";
-      rewriteBtn.disabled = value || !currentText;
-    }
-
-    promptInput.addEventListener("input", () => {
-      $("charCount").textContent =
-        promptInput.value.length.toLocaleString() + " / 8000";
+  try {
+    const response = await fetch(API_BASE + path, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+      signal: controller.signal
     });
 
-    form.addEventListener("submit", async (event) => {
-      event.preventDefault();
+    let body;
+    try {
+      body = await response.json();
+    } catch {
+      throw new Error("The server returned an invalid response.");
+    }
 
-      if (busy) return;
+    if (!response.ok) {
+      throw new Error(body.error || "Request failed. Please try again.");
+    }
 
-      const prompt = promptInput.value.trim();
+    if (typeof body.text !== "string" || !body.text.trim()) {
+      throw new Error("No writing was returned. Please try again.");
+    }
 
-      if (!prompt) {
-        setStatus(formStatus, "Please enter your idea first.", "error");
-        promptInput.focus();
-        return;
-      }
+    return body.text.trim();
+  } catch (error) {
+    if (error.name === "AbortError") {
+      throw new Error("The request took too long. Please try again.");
+    }
+    if (error instanceof TypeError) {
+      throw new Error("Cannot reach the backend. Check your internet connection and Cloudflare CORS settings.");
+    }
+    throw error;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
 
-      setBusy(true, "Creating your writing...");
-      setStatus(formStatus, "Working on your idea...");
-      setStatus(resultStatus, "Generating your text...");
-      setResult("");
+function setBusy(value, label = "Generate writing") {
+  busy = value;
+  generateBtn.disabled = value;
+  generateLabel.textContent = value ? label : "Generate writing";
+  rewriteBtn.disabled = value || !currentText;
+}
 
-      try {
-        const text = await postJSON("/api/write", {
-          prompt,
-          type: $("type").value,
-          tone: $("tone").value,
-          length: $("length").value,
-          language: $("language").value
-        });
+promptInput.addEventListener("input", () => {
+  $("charCount").textContent = promptInput.value.length + " / 8000";
+});
 
-        setResult(text);
-        addHistory(text);
-        setStatus(formStatus, "Your writing is ready.", "success");
-        setStatus(resultStatus, "Created successfully.", "success");
-      } catch (error) {
-        showPlaceholder();
-        setStatus(formStatus, error.message, "error");
-        setStatus(resultStatus, "Try again when you're ready.", "error");
-      } finally {
-        setBusy(false);
-      }
+form.addEventListener("submit", async event => {
+  event.preventDefault();
+  if (busy) return;
+
+  const prompt = promptInput.value.trim();
+  if (!prompt) {
+    setStatus(formStatus, "Please enter your idea first.", "error");
+    promptInput.focus();
+    return;
+  }
+
+  setBusy(true, "Creating your writing...");
+  setStatus(formStatus, "Working on your idea...");
+  setStatus(resultStatus, "Generating your text...");
+  setResult("");
+
+  try {
+    const text = await postJSON("/api/write", {
+      prompt,
+      type: $("type").value,
+      tone: $("tone").value,
+      length: $("length").value,
+      language: $("language").value
     });
 
-    copyBtn.addEventListener("click", async () => {
-      if (!currentText) return;
+    setResult(text);
+    addHistory(text);
+    setStatus(formStatus, "Your writing is ready.", "success");
+    setStatus(resultStatus, "Created successfully.", "success");
+  } catch (error) {
+    showPlaceholder();
+    setStatus(formStatus, error.message, "error");
+    setStatus(resultStatus, "Generation failed. Check your backend configuration and try again.", "error");
+  } finally {
+    setBusy(false);
+  }
+});
 
-      try {
-        await navigator.clipboard.writeText(currentText);
-        setStatus(resultStatus, "Copied to clipboard!", "success");
-      } catch {
-        const area = document.createElement("textarea");
-        area.value = currentText;
-        area.style.position = "fixed";
-        area.style.opacity = "0";
-        document.body.append(area);
-        area.select();
+copyBtn.addEventListener("click", async () => {
+  if (!currentText) return;
 
-        const copied = document.execCommand("copy");
-        area.remove();
+  try {
+    await navigator.clipboard.writeText(currentText);
+    setStatus(resultStatus, "Copied to clipboard!", "success");
+  } catch {
+    const area = document.createElement("textarea");
+    area.value = currentText;
+    area.style.position = "fixed";
+    area.style.opacity = "0";
+    document.body.append(area);
+    area.select();
+    const copied = document.execCommand("copy");
+    area.remove();
+    setStatus(resultStatus, copied ? "Copied to clipboard!" : "Copy failed. Select the text and copy it manually.", copied ? "success" : "error");
+  }
+});
 
-        setStatus(
-          resultStatus,
-          copied ? "Copied to clipboard!" : "Copy failed. Select the text and copy it manually.",
-          copied ? "success" : "error"
-        );
-      }
+downloadBtn.addEventListener("click", () => {
+  if (!currentText) return;
+
+  const blob = new Blob([currentText], { type: "text/plain;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "writer-ai-creation.txt";
+  document.body.append(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  setStatus(resultStatus, "Your download has started.", "success");
+});
+
+rewriteBtn.addEventListener("click", async () => {
+  if (!currentText || busy) return;
+
+  const instruction = window.prompt(
+    "How should the writing be improved?",
+    "Make it clearer, more natural, and better organized."
+  );
+
+  if (instruction === null || !instruction.trim()) return;
+
+  const originalText = currentText;
+  setBusy(true, "Improving your writing...");
+  setStatus(resultStatus, "Improving your text...");
+
+  try {
+    const text = await postJSON("/api/rewrite", {
+      text: originalText,
+      instruction: instruction.trim()
     });
 
-    downloadBtn.addEventListener("click", () => {
-      if (!currentText) return;
+    setResult(text);
+    addHistory(text);
+    setStatus(resultStatus, "Your improved writing is ready.", "success");
+  } catch (error) {
+    setStatus(resultStatus, error.message, "error");
+  } finally {
+    setBusy(false);
+  }
+});
 
-      const blob = new Blob([currentText], {
-        type: "text/plain;charset=utf-8"
-      });
+$("clearHistoryBtn").addEventListener("click", () => {
+  if (!history.length) return;
+  history = [];
+  saveHistory();
+  renderHistory();
+});
 
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = "writer-ai-creation.txt";
-      document.body.append(link);
-      link.click();
-      link.remove();
-      URL.revokeObjectURL(url);
-
-      setStatus(resultStatus, "Your text download has started.", "success");
-    });
-
-    rewriteBtn.addEventListener("click", async () => {
-      if (!currentText || busy) return;
-
-      const instruction = window.prompt(
-        "How should the writing be improved?",
-        "Make it clearer, more natural, and better organized."
-      );
-
-      if (instruction === null || !instruction.trim()) return;
-
-      const originalText = currentText;
-      setBusy(true, "Improving your writing...");
-      setStatus(resultStatus, "Improving your text...");
-
-      try {
-        const text = await postJSON("/api/rewrite", {
-          text: originalText,
-          instruction: instruction.trim()
-        });
-
-        setResult(text);
-        addHistory(text);
-        setStatus(resultStatus, "Your improved writing is ready.", "success");
-      } catch (error) {
-        setStatus(resultStatus, error.message, "error");
-      } finally {
-        setBusy(false);
-      }
-    });
-
-    $("clearHistoryBtn").addEventListener("click", () => {
-      history = [];
-      saveHistory();
-      renderHistory();
-    });
-
-    renderHistory();
-  </script>
+renderHistory();
+</script>
 </body>
 </html>
